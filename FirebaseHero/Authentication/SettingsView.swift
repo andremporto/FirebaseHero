@@ -11,11 +11,16 @@ import SwiftUI
 final class SettingsViewModel: ObservableObject {
     
     @Published var authProviders: [AuthProviderOption] = []
+    @Published var authUser: AuthDataResultModel? = nil
     
     func loadAuthProviders() {
         if let providers = try? AuthenticationManager.shared.getProviders() {
             authProviders = providers
         }
+    }
+    
+    func loadAuthUser() {
+        self.authUser = try? AuthenticationManager.shared.getAuthenticatedUser()
     }
     
     func signOut() throws {
@@ -42,6 +47,24 @@ final class SettingsViewModel: ObservableObject {
         try await AuthenticationManager.shared.updatePassword(password: password)
     }
     
+    func linkGoogleAcount() async throws {
+        let helper = SignInGoogleHelper()
+        let tokens = try await helper.signIn()
+        self.authUser = try await AuthenticationManager.shared.linkGoogle(tokens: tokens)
+    }
+    
+//    func linkAppleAcount() async throws {
+//        let helper = SignInAppleHelper()
+//        let tokens = try await helper.signInWithAppleFlow()
+//        self.authUser = try await AuthenticationManager.shared.linkApple(tokens: tokens)
+//    }
+    
+    func linkEmailAcount() async throws {
+        let email = "hello123@gmail.com"
+        let password = "hello123"
+        self.authUser = try await AuthenticationManager.shared.linkEmail(email: email, password: password)
+    }
+    
 }
 
 struct SettingsView: View {
@@ -65,10 +88,14 @@ struct SettingsView: View {
             if viewModel.authProviders.contains(.email) {
                 emailSection
             }
-            emailSection
+            
+            if viewModel.authUser?.isAnonymous == true {
+                anonymousSection
+            }
         }
         .onAppear {
             viewModel.loadAuthProviders()
+            viewModel.loadAuthUser()
         }
         .navigationTitle("Configurações")
     }
@@ -118,6 +145,45 @@ extension SettingsView {
             }
         } header: {
             Text("Configurações da Conta")
+        }
+    }
+    
+    private var anonymousSection: some View {
+        Section {
+            Button("Associar à conta Google") {
+                Task {
+                    do {
+                        try await viewModel.linkGoogleAcount()
+                        print("GOOGLE LINKADO!")
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+            
+//            Button("Associar à conta Apple") {
+//                Task {
+//                    do {
+//                        try await viewModel.linkAppleAcount()
+//                        print("APPLE LINKADA!")
+//                    } catch {
+//                        print(error)
+//                    }
+//                }
+//            }
+            
+            Button("Associar à conta de Email") {
+                Task {
+                    do {
+                        try await viewModel.linkEmailAcount()
+                        print("EMAIL LINKADO!")
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+        } header: {
+            Text("Criar Conta")
         }
     }
 }
