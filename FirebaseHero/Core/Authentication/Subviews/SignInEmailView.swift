@@ -2,7 +2,7 @@
 //  SignInEmailView.swift
 //  FirebaseHero
 //
-//  Created by André Porto on 02/04/24.
+//  Created by André Porto on 23/05/24.
 //
 
 import SwiftUI

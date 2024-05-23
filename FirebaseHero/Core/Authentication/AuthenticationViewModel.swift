@@ -2,7 +2,7 @@
 //  AuthenticationViewModel.swift
 //  FirebaseHero
 //
-//  Created by André Porto on 29/04/24.
+//  Created by André Porto on 23/05/24.
 //
 
 import Foundation

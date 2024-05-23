@@ -2,7 +2,7 @@
 //  AuthenticationManager.swift
 //  FirebaseHero
 //
-//  Created by André Porto on 02/04/24.
+//  Created by André Porto on 23/05/24.
 //
 
 import Foundation
@@ -152,12 +152,6 @@ extension AuthenticationManager {
         
         return try await linkCredential(credential: credential)
     }
-    
-//    func linkApple(tokens: SignInAppleResult) async throws -> AuthDataResultModel {
-//        let credencial = EmailAuthProvider.credential(withEmail: email, password: password)
-//        
-//        return try await linkCredential(credential: credencial)
-//    }
     
     private func linkCredential(credential: AuthCredential) async throws -> AuthDataResultModel {
         guard let user = Auth.auth().currentUser else {

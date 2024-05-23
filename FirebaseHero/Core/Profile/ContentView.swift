@@ -2,7 +2,7 @@
 //  ProfileView.swift
 //  FirebaseHero
 //
-//  Created by André Porto on 29/04/24.
+//  Created by André Porto on 23/05/24.
 //
 
 import SwiftUI
@@ -16,30 +16,30 @@ final class ProfileViewModel: ObservableObject {
         let authDataResult = try AuthenticationManager.shared.getAuthenticatedUser()
         self.user = try await UserManager.shared.getUser(userId: authDataResult.uid)
     }
-    
 }
 
 struct ProfileView: View {
-    
-    @StateObject private var viewModel = ProfileViewModel()
+    @StateObject private var viewModel = ItemViewModel()
     @Binding var showSignInView: Bool
     
     var body: some View {
-        List {
-            if let user = viewModel.user {
-                Text("UserId: \(user.userId)")
-                
-                if let isAnonymous = user.isAnonymous {
-                    Text("É Anônimo: \(isAnonymous.description.capitalized)")
+        NavigationView {
+            List {
+                ForEach(viewModel.items) { item in
+                    NavigationLink(destination: ItemDetailView(item: item)) {
+                        Text(item.name)
+                    }
                 }
+                .onDelete(perform: viewModel.deleteItem)
             }
+            .navigationBarItems(trailing: NavigationLink("Adicionar", destination: AddItemView(viewModel: viewModel)))
         }
-        .task {
-            try? await viewModel.loadCurrentUser()
+        .onAppear {
+            viewModel.fetchItems()
         }
-        .navigationTitle("Perfil")
+        .navigationTitle("Minhas Chaves")
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .topBarLeading) {
                 NavigationLink {
                     SettingsView(showSignInView: $showSignInView)
                 } label: {

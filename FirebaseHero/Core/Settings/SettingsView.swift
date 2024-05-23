@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  FirebaseHero
 //
-//  Created by André Porto on 04/04/24.
+//  Created by André Porto on 23/05/24.
 //
 
 import SwiftUI
