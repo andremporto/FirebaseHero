@@ -21,9 +21,9 @@ struct ItemDetailView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("Item Details")) {
-                TextField("Name", text: $name)
-                TextField("Description", text: $description)
+            Section(header: Text("Detalhes da Chave")) {
+                TextField("Nome", text: $name)
+                TextField("Descrição", text: $description)
             }
             
             Button("Atualizar Chave") {
@@ -35,11 +35,6 @@ struct ItemDetailView: View {
     }
 }
 
-
-//#Preview {
-//    ItemDetailView()
-//}
-
 #Preview {
-    ItemDetailView(item: Item(name: "Exemplo", description: "Descricao de exemplo", timestamp: Date()))
+    ItemDetailView(item: Item(name: "Nome da Chave", description: "Descrição da Chave", timestamp: Date()))
 }

@@ -19,23 +19,37 @@ final class ProfileViewModel: ObservableObject {
 }
 
 struct ProfileView: View {
-    @StateObject private var viewModel = ItemViewModel()
+    @StateObject private var viewModel = ProfileViewModel()
+    @StateObject private var viewModel2 = ItemViewModel()
     @Binding var showSignInView: Bool
     
     var body: some View {
         NavigationView {
+            
             List {
-                ForEach(viewModel.items) { item in
+                
+                if let user = viewModel.user {
+                    Text("UserId: \(user.userId)")
+                    
+                    if let isAnonymous = user.isAnonymous {
+                        Text("É Anônimo: \(isAnonymous.description.capitalized)")
+                    }
+                }
+                
+                ForEach(viewModel2.items) { item in
                     NavigationLink(destination: ItemDetailView(item: item)) {
                         Text(item.name)
                     }
                 }
-                .onDelete(perform: viewModel.deleteItem)
+                .onDelete(perform: viewModel2.deleteItem)
             }
-            .navigationBarItems(trailing: NavigationLink("Adicionar", destination: AddItemView(viewModel: viewModel)))
+            .task {
+                try? await viewModel.loadCurrentUser()
+            }
         }
+        .navigationBarItems(trailing: NavigationLink("Adicionar", destination: AddItemView(viewModel: viewModel2)))
         .onAppear {
-            viewModel.fetchItems()
+            viewModel2.fetchItems()
         }
         .navigationTitle("Minhas Chaves")
         .toolbar {
@@ -46,7 +60,6 @@ struct ProfileView: View {
                     Image(systemName: "gear")
                         .font(.headline)
                 }
-                
             }
         }
     }
